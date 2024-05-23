@@ -46,6 +46,43 @@ public struct BitArray: Hashable, RangeReplaceableCollection {
     /// Constructs an empty bit array.
     public init() {}
 
+    public mutating func replaceSubrange<C>(_ subrange: Range<Int>, with newElements: C) where C : Collection, Bool == C.Element {
+        let removeCount = subrange.count
+        let insertCount = newElements.count
+        let shift = insertCount - removeCount
+
+        if shift > 0 {
+            bits.reserveCapacity(bits.count + (shift / Constants.IntSize) + 1)
+        }
+
+        // Shift existing elements to make space or close the gap
+        for i in stride(from: count - 1, through: subrange.lowerBound, by: -1) {
+            let targetIndex = i + shift
+            if targetIndex < count {
+                let value = valueAtIndex(i)
+                setValue(value, atIndex: targetIndex)
+            }
+        }
+
+        // Insert new elements
+        var currentIndex = subrange.lowerBound
+        for element in newElements {
+            setValue(element, atIndex: currentIndex)
+            currentIndex += 1
+        }
+
+        // Update count
+        count += shift
+
+        // Recalculate cardinality
+        cardinality = 0
+        for i in 0..<count {
+            if valueAtIndex(i) {
+                cardinality += 1
+            }
+        }
+    }
+    
     /// Constructs a bit array from a `Bool` sequence, such as an array.
     public init<S: Sequence>(_ elements: S) where S.Iterator.Element == Bool {
         for value in elements {
