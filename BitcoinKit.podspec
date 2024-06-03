@@ -11,18 +11,8 @@ Pod::Spec.new do |spec|
 
   spec.requires_arc = true
   spec.source = { git: 'https://github.com/Whitehare2023/BitcoinKit.git', branch: 'fix-secp256k1-build' }
-  spec.source_files = 'BitcoinKit/**/*.{h,m,swift}', 'Sources/BitcoinKit/**/*.{h,m,swift}'
+  spec.source_files = 'Sources/BitcoinKit/**/*.{h,m,swift}'
   spec.exclude_files = 'Sources/**/LinuxSupport.swift'
   spec.ios.deployment_target = '8.0'
   spec.swift_version = '5.0'
-
-  spec.pod_target_xcconfig = {
-    'SWIFT_WHOLE_MODULE_OPTIMIZATION' => 'YES',
-    'APPLICATION_EXTENSION_API_ONLY' => 'YES',
-    'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/BitcoinKit/Libraries/openssl/include" "${PODS_ROOT}/BitcoinKit/Libraries/secp256k1/include"',
-    'LIBRARY_SEARCH_PATHS' => '"${PODS_ROOT}/BitcoinKit/Libraries/openssl/lib" "${PODS_ROOT}/BitcoinKit/Libraries/secp256k1/lib"',
-    'OTHER_SWIFT_FLAGS' => '-D BitcoinKitXcode'
-  }
-  spec.preserve_paths = ['setup', 'Libraries']
-  spec.prepare_command = 'sh setup/build_libraries.sh'
 end
